@@ -1,0 +1,16 @@
+---
+- name: Set the timezone on the images
+  hosts: localhost
+  tasks: 
+    - name: Set the time zone to US/Pacific
+      timezone:
+        name: US/Pacific
+      notify: update timezone
+      become: true
+      become_method: sudo
+  
+  handlers:
+    - name: update timezone
+      command: dpkg-reconfigure --frontend noninteractive tzdata
+      become: true
+      become_method: sudo

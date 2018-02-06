@@ -1,0 +1,54 @@
+---
+- name: Install cassandra
+  hosts: localhost
+  tasks: 
+    - name: Cassandra | Install Cassandra | APT Key 
+      apt_key:
+        url: "https://www.apache.org/dist/cassandra/KEYS"
+        state: present
+      become: true
+      become_method: sudo
+
+    - name: Cassandra | Install Cassandra | APT Repo 
+      apt_repository:
+        repo: 'deb http://www.apache.org/dist/cassandra/debian 36x main'
+        state: present
+      become: true
+      become_method: sudo
+
+    - name: Cassandra | Install Cassandra | APT Key
+      apt_key:
+        keyserver: pool.sks-keyservers.net
+        id: A278B781FE4B2BDA
+
+    - name: Cassandra | Install Cassandra | Install Cassandra
+      apt:
+        name: cassandra
+        update_cache: yes
+        state: present
+      become: true
+      become_method: sudo
+
+    - name: Cassandra | Install Cassandra | Chmod for cassandra.yaml
+      file:
+        path: /etc/cassandra/cassandra.yaml
+        state: touch
+        mode: 0777
+      become: true
+      become_method: sudo
+
+    - name: Cassandra | Install Cassandra | Chmod for cassandra.yaml
+      file:
+        path: /var/lib/cassandra
+        state: touch
+        mode: 0777
+      become: true
+      become_method: sudo
+
+    - name: Cassandra | Install Cassandra | Chmod for cassandra.yaml
+      file:
+        path: /var/log/cassandra
+        state: touch
+        mode: 0777
+      become: true
+      become_method: sudo

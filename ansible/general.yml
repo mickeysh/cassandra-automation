@@ -1,0 +1,35 @@
+---
+- name: install java runtime
+  hosts: localhost
+  tasks:
+    - name: Cassandra | General | APT Repo 
+      apt_repository:
+        repo: 'ppa:openjdk-r/ppa'
+        state: present
+      become: true
+      become_method: sudo
+
+    - name: install general apps
+      apt: 
+        name: "{{ item }}"
+        update_cache: yes
+        state: present
+      become: true
+      become_method: sudo
+      with_items:
+        - vim
+        - curl
+        - zip
+        - unzip
+        - git
+        - python-pip
+
+    - name: install java JDK
+      apt: 
+        name: "{{ item }}"
+        update_cache: yes
+        state: present
+      become: true
+      become_method: sudo
+      with_items:
+        - openjdk-8-jdk
