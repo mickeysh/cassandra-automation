@@ -147,24 +147,6 @@ resource "null_resource" "copy_yaml" {
   }   
 }
 
-resource "null_resource" "bootstrap" {
-  count         = "${var.cassandra_servers}"
-  depends_on = ["null_resource.copy_yaml"]
-  
-  provisioner "remote-exec" {
-    inline = [
-      "sudo systemctl stop cassandra",
-      "sudo rm -rf /var/lib/cassandra/data/system/*",
-      "sudo systemctl start cassandra"
-    ]
-    connection {
-      host = "${aws_instance.cassandra.*.public_ip[count.index]}"
-      user = "${var.user}"
-      private_key = "${file("${path.module}/files/${var.default_keypair_name}.pem")}"
-    }
-  }
-}
-
 output "cassandra_server_public_ip" {
   value = "${join(",", aws_instance.cassandra.*.public_ip)}"
 }

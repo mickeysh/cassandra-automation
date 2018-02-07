@@ -1,15 +1,15 @@
 ---
-- name: install java runtime
+- name: Cassandra | General setup | install java runtime
   hosts: localhost
   tasks:
-    - name: Cassandra | General | APT Repo 
+    - name: Cassandra | General setup | APT Repo 
       apt_repository:
         repo: 'ppa:openjdk-r/ppa'
         state: present
       become: true
       become_method: sudo
 
-    - name: install general apps
+    - name: Cassandra | General setup | Install general apps
       apt: 
         name: "{{ item }}"
         update_cache: yes
@@ -24,7 +24,7 @@
         - git
         - python-pip
 
-    - name: install java JDK
+    - name: Cassandra | General setup | Install java JDK
       apt: 
         name: "{{ item }}"
         update_cache: yes
@@ -33,3 +33,11 @@
       become_method: sudo
       with_items:
         - openjdk-8-jdk
+    
+    - name: Cassandra | General setup | Install cassandra-driver
+      pip:
+        name: cassandra-driver
+        state: present 
+
+    - name: Cassandra | General setup | Set environment variable
+      shell: echo 'export CQLSH_NO_BUNDLED=TRUE' >> ~/.profile  

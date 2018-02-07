@@ -37,18 +37,9 @@
       become: true
       become_method: sudo
 
-    - name: Cassandra | Install Cassandra | Chmod for cassandra.yaml
+    - name: Cassandra | Install Cassandra | Clear system data
       file:
-        path: /var/lib/cassandra
-        state: touch
-        mode: 0777
-      become: true
-      become_method: sudo
-
-    - name: Cassandra | Install Cassandra | Chmod for cassandra.yaml
-      file:
-        path: /var/log/cassandra
-        state: touch
-        mode: 0777
+        path: /var/lib/cassandra/data/system/*
+        state: absent
       become: true
       become_method: sudo
