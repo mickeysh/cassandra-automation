@@ -31,15 +31,9 @@
 
     - name: Cassandra | Install Cassandra | Chmod for cassandra.yaml
       file:
-        path: /etc/cassandra/cassandra.yaml
-        state: touch
+        path: /etc/cassandra/
+        state: directory
         mode: 0777
-      become: true
-      become_method: sudo
-
-    - name: Cassandra | Install Cassandra | Clear system data
-      file:
-        path: /var/lib/cassandra/data/system/*
-        state: absent
+        recurse: yes
       become: true
       become_method: sudo
