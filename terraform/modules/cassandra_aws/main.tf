@@ -123,14 +123,17 @@ resource "aws_instance" "cassandra" {
     }
 }
 
+# Set cassandra seed according to the number of requested DCs (one in each DC)
 data "template_file" "seeds" {
     count    = "${var.cassandra_dcs}"
     template = "${aws_instance.cassandra.*.private_ip[var.cassandra_servers * count.index]}"
 }
 
+# Prepare the cassandra.yaml file from template 
 data "template_file" "cassandra_yaml" {
     count         = "${var.cassandra_servers * var.cassandra_dcs}"
     template      = "${file("${path.module}/files/cassandra.yaml")}"
+
     vars {
         cluster_name = "${var.cassandra_cluster}"
         seeds        = "${join(",", data.template_file.seeds.*.rendered)}"
@@ -138,6 +141,7 @@ data "template_file" "cassandra_yaml" {
     }
 }
 
+# Prepare the rackdc file from template
 data "template_file" "rackdc" {
     count         = "${var.cassandra_servers * var.cassandra_dcs}"
     template      = "${file("${path.module}/files/cassandra-rackdc.properties")}"
@@ -146,6 +150,7 @@ data "template_file" "rackdc" {
     }
 }
 
+# Copy the prepared files to the cassandra servers
 resource "null_resource" "copy_yaml" {
   count         = "${var.cassandra_servers * var.cassandra_dcs}"
     
@@ -170,6 +175,10 @@ resource "null_resource" "copy_yaml" {
       private_key = "${file("${path.module}/files/${var.default_keypair_name}.pem")}"
     }
   }  
+}
+
+resource "null_resource" "reset" {
+  count         = "${var.cassandra_servers * var.cassandra_dcs}"
 
   provisioner "remote-exec" {
     inline = [
@@ -184,4 +193,5 @@ resource "null_resource" "copy_yaml" {
       private_key = "${file("${path.module}/files/${var.default_keypair_name}.pem")}"
     }
   }
+  depends_on = ["null_resource.copy_yaml"]
 }
