@@ -110,7 +110,7 @@ resource "aws_instance" "cassandra" {
     ami           = "${data.aws_ami.cassandra.id}"
     instance_type = "${var.instance_type}"
 
-    subnet_id              = "${element(data.aws_subnet_ids.subnets.ids, count.index % var.cassandra_dcs)}"
+    subnet_id              = "${element(data.aws_subnet_ids.subnets.ids, ceil(count.index/var.cassandra_servers))}"
     vpc_security_group_ids = ["${aws_security_group.cassandra_sg.id}"]
     key_name               = "${var.default_keypair_name}"
     
@@ -119,7 +119,7 @@ resource "aws_instance" "cassandra" {
     tags {
       Owner           = "${var.owner}"
       Name            = "Cassandra-${count.index}"
-      Datacenter      = "DC-${count.index % var.cassandra_dcs}"
+      Datacenter      = "DC-${ceil(count.index/var.cassandra_servers)}"
     }
 }
 
@@ -146,7 +146,7 @@ data "template_file" "rackdc" {
     count         = "${var.cassandra_servers * var.cassandra_dcs}"
     template      = "${file("${path.module}/files/cassandra-rackdc.properties")}"
     vars {
-        datacenter = "dc-${count.index % var.cassandra_dcs}"
+        datacenter = "dc-${ceil(count.index/var.cassandra_servers)}"
     }
 }
 
