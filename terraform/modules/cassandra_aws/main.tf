@@ -4,7 +4,7 @@ data "aws_ami" "cassandra" {
     most_recent = true
     filter {
         name   = "name"
-        values = ["cassandra-*"]
+        values = ["${var.image["name"]}-*"]
     }
     filter {
         name   = "virtualization-type"
@@ -12,11 +12,11 @@ data "aws_ami" "cassandra" {
     }
     filter {
         name   = "tag:Owner"
-        values = ["Opsschool"]
+        values = ["${var.image["tagowner"]}"]
     }
     filter {
         name   = "tag:Name"
-        values = ["Cassandra"] 
+        values = ["${var.image["tagname"]}"] 
     }
 }
 

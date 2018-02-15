@@ -15,6 +15,11 @@ module "cassandra_aws" {
     cassandra_dcs        = "2"            # number of cassandra datacenters
     cassandra_servers    = "3"            # number of cassandra nodes per datacenter
     vpc_id               = "vpc-584d6e20" # AWS VPC 
+    image                = {
+      "name"     = "cassandra"
+      "tagowner" = "Opsschool"
+      "tagname"  = "Cassandra"
+    }
 }
 
 output "public_ip" {

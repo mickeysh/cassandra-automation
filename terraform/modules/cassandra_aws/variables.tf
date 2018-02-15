@@ -34,3 +34,13 @@ variable user {
   description = "EC2 Linux instance user"
   default = "ubuntu"
 }
+
+variable image {
+  type = "map"
+  description = "Cassandra AWS AMI"
+  default = {
+    "name"     = "cassandra"
+    "tagowner" = "cassandra"
+    "tagname"  = "Cassandra"
+  }
+}
